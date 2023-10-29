@@ -1,0 +1,16 @@
+version: '3.1'
+
+services:
+  development_env:
+    build: .
+    image: young_development_env
+    container_name: works_env
+    ports: 
+      - 8000:8000
+      - 8001:8001
+      - 8002:8002
+      - 8003:8003
+    volumes:
+      - /home/young/works:/root/works
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

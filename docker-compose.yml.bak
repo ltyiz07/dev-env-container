@@ -1,0 +1,40 @@
+version: '3.1'
+
+services:
+  development_env:
+    build: 
+      context: .
+      dockerfile_inline: |
+        FROM ubuntu:22.04
+        RUN apt-get -y update && apt-get -y upgrade
+        RUN apt-get install -y \
+                python3 \
+                git \
+                neovim \
+                net-tools\
+                build-essential \
+                curl \
+                sudo \
+                && rm -rf /var/lib/apt/lists/*
+        RUN useradd --system --create-home --no-log-init \
+                --shell /bin/bash -g root -G sudo -u 1001 youngdev
+        RUN echo "youngdev:0000" | chpasswd && adduser youngdev sudo
+        USER youngdev
+        WORKDIR /home/youngdev
+
+        RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+
+        CMD ["source" "$HOME/.cargo/env"]
+        CMD ["tail", "-f", "/dev/null"]
+    image: young_development_env
+    container_name: works_env
+    ports: 
+      - 8000:8000
+      - 8001:8001
+      - 8002:8002
+      - 8003:8003
+    working_dir: /home/youngdev
+    volumes:
+      - /home/young/works:/home/youngdev/works
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
