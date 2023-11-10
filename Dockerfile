@@ -9,10 +9,17 @@ RUN apt-get install -y \
 	curl \
 	sudo \
 	tmux \
+	netcat \
+	locales \
 	&& rm -rf /var/lib/apt/lists/*
 
 WORKDIR /root
 
+# Set local locale
+RUN locale-gen ko_KR.UTF-8
+ENV LC_ALL ko_KR.UTF-8
+
+# Install node with nvm and sourcing
 RUN mkdir /usr/local/nvm
 ENV NVM_DIR /usr/local/nvm
 ENV NODE_VERSION 21
@@ -24,8 +31,12 @@ RUN curl https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash 
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 
+# Install rust and sourcing
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 RUN . $HOME/.cargo/env
 
+# Setting utiltities
+
+# Make dockerfile wwaiting
 RUN . $HOME/.bashrc
 CMD ["tail", "-f", "/dev/null"]

@@ -1,0 +1,62 @@
+{
+    "workbench.colorTheme": "Monokai Pro",
+    "javascript.updateImportsOnFileMove.enabled": "always",
+    "diffEditor.ignoreTrimWhitespace": false,
+    "[python]": {
+        "editor.formatOnType": true
+    },
+    "editor.semanticTokenColorCustomizations": {
+        "enabled": true
+    },
+    "editor.tokenColorCustomizations": {
+        "variables": "#c3f53a",
+        "textMateRules": [
+            {
+                "scope": "variable.name",
+                "settings": {
+                    "foreground": "#fff23e",
+                    "fontStyle": "bold"
+                }
+            }
+        ]
+    },
+    "workbench.iconTheme": "Monokai Pro Icons",
+    "workbench.colorCustomizations": {},
+    "vim.leader": ";",
+    "vim.easymotion": true,
+    "vim.sneak": true,
+    "vim.incsearch": true,
+    "workbench.startupEditor": "none",
+    "editor.formatOnSaveMode": "modifications",
+    "editor.codeActionsOnSave": {},
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "[sql]": {
+        "editor.defaultFormatter": "mtxr.sqltools"
+    },
+    "vim.normalModeKeyBindingsNonRecursive": [
+        {
+            "before": [
+                "leader",
+                "j"
+            ],
+            "after": [
+                "leader",
+                "leader",
+                "2",
+                "f"
+            ]
+        },
+        {
+            "before": [
+                "leader",
+                "k"
+            ],
+            "after": [
+                "leader",
+                "leader",
+                "2",
+                "F"
+            ],
+        }
+    ],
+}

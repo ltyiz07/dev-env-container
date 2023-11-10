@@ -27,3 +27,8 @@ Automate create development environment
 
 ### vscode
 * automate vscode connection
+
+## TODO
+
+### Install
+Add netcat for default
