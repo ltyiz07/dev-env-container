@@ -1,5 +1,5 @@
-vim.g.loaded_netrw = 1
-vim.g.loaded_netrwPlugin = 1
+-- vim.g.loaded_netrw = 1
+-- vim.g.loaded_netrwPlugin = 1
 
 vim.opt.nu = true
 
@@ -23,8 +23,9 @@ vim.opt.incsearch = true
 
 vim.opt.termguicolors = true
 
-vim.opt.scrolloff = 8
-vim.opt.signcolumn = "yes"
+vim.opt.scrolloff = 4
+vim.opt.signcolumn = "auto"
+vim.api.nvim_set_hl(0, 'LineNr', { fg='black' })
 vim.opt.isfname:append("@-@")
 
 vim.opt.updatetime = 50

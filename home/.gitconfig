@@ -8,6 +8,7 @@
 	co = checkout
 	br = branch
 	cm = commit
+    la = log --format='%C(auto) %h %d \"%s\" %C(green) %aN %C(red) %ai' --graph --all
 [core]
 	editor = nvim
 	# pager = delta

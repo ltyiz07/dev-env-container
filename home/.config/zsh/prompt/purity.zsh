@@ -34,16 +34,9 @@ prompt_purification_setup() {
 	# but can be slow on large repos
 	zstyle ':vcs_info:*:*' check-for-changes true
 
-	# Set the right prompt to the vcs_info message
-	
-	# RPROMPT='⎇ ${vcs_info_msg_0_}'
-	RPROMPT='%F{8}⎇  $vcs_info_msg_0_%f'
-
-	# Set the left prompt
-	# PROMPT=$'%F{white}%~ %B%F{blue}>%f%b '
-	# PROMPT='%F{blue}%c %(?.%F{green}.%F{red})❯%f '
-
-	PROMPT='%B%(?..[%?] )%b%n@nano%F{green}%~%f> '
+	# Set the right side prompt to the vcs_info
+	RPROMPT='%F{yellow}%D{%H:%M:%S}%f%F{8} ⎇  $vcs_info_msg_0_%f'
+	# Set the left side prompt
+	PROMPT='%B%(?..[%?] )%b%n@%U%m%u:%F{green}%~%f> '
 }
-
 prompt_purification_setup

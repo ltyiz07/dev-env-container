@@ -1,5 +1,5 @@
 export ZDOTDIR="$HOME/.config/zsh"
-export HISTFILE="$ZDOTDIR/.zhistory" 
+export HISTFILE="$ZDOTDIR/.zsh_history" 
 
 export EDITOR="nvim"
 export VISUAL="nvim"

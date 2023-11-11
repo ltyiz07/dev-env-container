@@ -21,12 +21,11 @@ RUN locale-gen ko_KR.UTF-8
 ENV LC_ALL ko_KR.UTF-8
 
 # Setting prompt utiltities
-COPY ./home/.config/nvim	/root/.config/nvim
-COPY ./home/.tmux.conf  	/root/.tmux.conf
-COPY ./home/.gitconfig 		/root/.gitconfig
+COPY ./home/.config             /root/.config
+COPY ./home/.tmux.conf  	    /root/.tmux.conf
+COPY ./home/.gitconfig 		    /root/.gitconfig
 COPY ./home/.git-credentials	/root/.git-credentials
-COPY ./home/.zshenv		/root/.zshenv
-COPY ./home/.config/zsh		/root/.config/zsh
+COPY ./home/.zshenv		        /root/.zshenv
 
 # Install node with nvm and sourcing
 RUN mkdir /usr/local/nvm
