@@ -16,9 +16,17 @@ RUN apt-get install -y \
 
 WORKDIR /root
 
-# Set local locale
+# Set locale as Korea
 RUN locale-gen ko_KR.UTF-8
 ENV LC_ALL ko_KR.UTF-8
+
+# Setting prompt utiltities
+COPY ./home/.config/nvim	/root/.config/nvim
+COPY ./home/.tmux.conf  	/root/.tmux.conf
+COPY ./home/.gitconfig 		/root/.gitconfig
+COPY ./home/.git-credentials	/root/.git-credentials
+COPY ./home/.zshenv		/root/.zshenv
+COPY ./home/.config/zsh		/root/.config/zsh
 
 # Install node with nvm and sourcing
 RUN mkdir /usr/local/nvm
@@ -31,18 +39,12 @@ RUN curl https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash 
 	&& nvm use default
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+RUN echo "source $NVM_DIR/nvm.sh" >> /root/.config/zsh/.zshrc
 
 # Install rust and sourcing
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 RUN . $HOME/.cargo/env
+RUN echo "source $HOME/.cargo/env" >> /root/.config/zsh/.zshrc
 
-# Setting utiltities
-COPY ./.tmux.conf /root/.tmux.conf
-COPY ./.gitconfig /root/.gitconfig
-COPY ./.git-credentials /root/.git-credentials
-COPY ./.zshenv /root/.zshenv
-COPY ./.config/zsh/.zshrc /root/.config/zsh/.zshrc
-
-# Make dockerfile wwaiting
-RUN . $HOME/.zshenv
+# Make dockerfile waiting
 CMD ["tail", "-f", "/dev/null"]

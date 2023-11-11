@@ -26,8 +26,9 @@ Automate create development environment
 
 ## Copied parent config files
 
-* ~/.zshenv
-* ~/.config/zsh
+* ~/.config/nvim
 * ~/.tmux.conf
 * ~/.gitconfig
 * ~/.git-credentials
+* ~/.zshenv
+* ~/.config/zsh
