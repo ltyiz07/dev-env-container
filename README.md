@@ -18,17 +18,16 @@ Automate create development environment
 * consider pause container to retain tmux sessions
 * update envs scripts
 
-### Git
-* set credentials automatically
-* set settings for global configs
-
 ### neovim
 * neovim version support (install latest automatically)
 
 ### vscode
 * automate vscode connection
 
-## TODO
+## Copied parent config files
 
-### Install
-Add netcat for default
+* ~/.zshenv
+* ~/.config/zsh
+* ~/.tmux.conf
+* ~/.gitconfig
+* ~/.git-credentials

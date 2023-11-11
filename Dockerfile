@@ -11,6 +11,7 @@ RUN apt-get install -y \
 	tmux \
 	netcat \
 	locales \
+	zsh \
 	&& rm -rf /var/lib/apt/lists/*
 
 WORKDIR /root
@@ -36,7 +37,12 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 RUN . $HOME/.cargo/env
 
 # Setting utiltities
+COPY ./.tmux.conf /root/.tmux.conf
+COPY ./.gitconfig /root/.gitconfig
+COPY ./.git-credentials /root/.git-credentials
+COPY ./.zshenv /root/.zshenv
+COPY ./.config/zsh/.zshrc /root/.config/zsh/.zshrc
 
 # Make dockerfile wwaiting
-RUN . $HOME/.bashrc
+RUN . $HOME/.zshenv
 CMD ["tail", "-f", "/dev/null"]
