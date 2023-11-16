@@ -1,6 +1,7 @@
 FROM ubuntu:22.04
 RUN apt-get -y update && apt-get -y upgrade
 RUN apt-get install -y \
+    netcat \
 	python3 \
 	git \
 	neovim \
@@ -21,11 +22,11 @@ RUN locale-gen ko_KR.UTF-8
 ENV LC_ALL ko_KR.UTF-8
 
 # Setting prompt utiltities
-COPY ./home/.config             /root/.config
-COPY ./home/.tmux.conf  	    /root/.tmux.conf
-COPY ./home/.gitconfig 		    /root/.gitconfig
-COPY ./home/.git-credentials	/root/.git-credentials
-COPY ./home/.zshenv		        /root/.zshenv
+COPY ./home/.config             ./.config
+COPY ./home/.tmux.conf  	    ./.tmux.conf
+COPY ./home/.gitconfig 		    ./.gitconfig
+COPY ./home/.git-credentials	./.git-credentials
+COPY ./home/.zshenv		        ./.zshenv
 
 # Install node with nvm and sourcing
 RUN mkdir /usr/local/nvm
