@@ -1,30 +1,14 @@
--- defind map method
-function map(mode, lhs, rhs, opts)
-    local options = { noremap = true, silent = true }
-    if opts then
-        if opts.desc then
-            opts.desc = "keymaps.lua: " .. opts.desc
-        end
-        options = vim.tbl_extend('force', options, opts)
-    end
-    vim.api.nvim_set_keymap(mode, lhs, rhs, options)
-end
+local map = require('base.utils.mapper').map
 
 -- set leader key with: ;
-vim.g.mapleader = ";";
+vim.g.mapleader = ";"
 
 
 -- open termianl with: :term
 --      back to normalmode from isertmode at term with: <C-\><C-n>
 
 -- toggle undotree with: leader + u
-map("n", "<leader>u", ":UndotreeToggle<CR>")
-
--- toggle nerd tree with: leader + n
-map("n", "<A-1>", "<Cmd>NERDTreeToggle<CR>")
-map("n", "<leader>n", "<Cmd>NERDTreeFind<CR>")
--- open vim file explorer with: leader + e
-map("n", "<leader>e", "<Cmd>NERDTreeToggle<CR>")
+map("n", "<leader>u", "<Cmd>UndotreeToggle<CR>")
 
 -- change pane with: ctrl + {h, j, k, l}
 map("n", "<C-h>", "<C-w>h")
@@ -38,7 +22,7 @@ map("n", "<C-Up>", "<C-w>+")
 map("n", "<C-Down>", "<C-w>-")
 
 -- close buffer with: ctrl + w
-map("n", "<C-w>", "<Cmd>bd<CR>")
+map("n", "<C-q>", "<Cmd>q<CR>")
 -- create new tab with: ctrl + n
 map("n", "<C-n>", "<Cmd>tabnew<CR>")
 -- chnage between tabs with: alt + {h, l}
@@ -53,11 +37,11 @@ map("n", "<A-j>", "<Cmd>bnext<CR>")
 -- split current pane left with: leader + [s]plit + [l]eft
 map("n", "<leader>sl", "<Cmd>vert sb<CR>")
 -- split current pane right with: leader + [s]plit + [r]ight
-map("n", "<leader>sr", "<Cmd>vert belowright sb<CR><C-w>h")
+ map("n", "<leader>sr", "<Cmd>vert belowright sb<CR>")
 -- split current pane up with: leader + [s]plit + [u]p
 map("n", "<leader>su", "<Cmd>sb<CR>")
 -- split current pane down with: leader + [s]plit + [d]own
-map("n", "<leader>sd", "<Cmd>sb<CR><C-w>k")
+map("n", "<leader>sd", "<Cmd>sb<CR><C-w>j")
 
 
 -- save current file with: ctrl + s

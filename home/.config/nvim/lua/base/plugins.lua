@@ -36,17 +36,57 @@ packer.init({
 return packer.startup(function(use)
     -- use 'neovim/nvim-lspconfig'
     use 'wbthomason/packer.nvim' -- Have packer manage itself
+    use 'mbbill/undotree'
+    use 'preservim/nerdtree'
+
+    --use 'vim-airline/vim-airline'
+    --use 'vim-airline/vim-airline-themes'
+    
+    --[[
     --use "nvim-lua/popup.nvim" -- An implementation of the Popup API from vim in Neovim
     use ({
         'savq/melange-nvim',
         commit = '78af754ad22828ea3558e2990326b8aa39730918'
     })
-    use 'mbbill/undotree'
-    use 'preservim/nerdtree'
+    use {
+        'nvim-telescope/telescope.nvim', tag = '0.1.1',
+        -- or                            , branch = '0.1.x',
+        requires = { {'nvim-lua/plenary.nvim'} }
+    }
+    use {
+        'nvim-treesitter/nvim-treesitter',
+        run = function()
+        local ts_update = require('nvim-treesitter.install').update({ with_sync = true })
+        ts_update()
+        end,
+    }
 
-    -- use { 'ggandor/leap.nvim' }
+    use {
+        'VonHeikemen/lsp-zero.nvim',
+        branch = 'v2.x',
+        requires = {
+            -- LSP Support
+            {'neovim/nvim-lspconfig'},             -- Required
+            {                                      -- Optional
+                'williamboman/mason.nvim',
+                run = function()
+                    pcall(vim.cmd, 'MasonUpdate')
+                end,
+            },
+            {'williamboman/mason-lspconfig.nvim'}, -- Optional
+            -- Autocompletion
+            {'hrsh7th/nvim-cmp'},     -- Required
+            {'hrsh7th/cmp-nvim-lsp'}, -- Required
+            {'L3MON4D3/LuaSnip'},     -- Required
+        }
+    }
+
+    use { 'ggandor/leap.nvim' }
+    use { 'mhartington/formatter.nvim' }
     -- Automatically set up your configuration after cloning packer.nvim
     -- Put this at the end after all plugins
+    --]]
+    
     if PACKER_BOOTSTRAP then
         require('packer').sync()
     end
