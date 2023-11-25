@@ -12,8 +12,8 @@ RUN apt-get install -y \
 	tmux \
 	netcat \
 	locales \
-	zsh \
-	&& apt-get clean -y \
+	zsh 
+RUN apt-get clean -y \
 	&& apt-get autoremove -y \
 	&& rm -rf /var/lib/apt/lists/*
 
