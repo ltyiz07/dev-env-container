@@ -1,6 +1,8 @@
 FROM ubuntu:22.04
 RUN apt-get -y update && apt-get -y upgrade
 RUN apt-get install -y \
+
+	
     netcat \
 	python3 \
 	git \
@@ -13,6 +15,8 @@ RUN apt-get install -y \
 	netcat \
 	locales \
 	zsh \
+	&& apt-get clean -y \
+	&& apt-get autoremove -y \
 	&& rm -rf /var/lib/apt/lists/*
 
 WORKDIR /root
@@ -20,13 +24,6 @@ WORKDIR /root
 # Set locale as Korea
 RUN locale-gen ko_KR.UTF-8
 ENV LC_ALL ko_KR.UTF-8
-
-# Setting prompt utiltities
-COPY ./home/.config             ./.config
-COPY ./home/.tmux.conf  	    ./.tmux.conf
-COPY ./home/.gitconfig 		    ./.gitconfig
-COPY ./home/.git-credentials	./.git-credentials
-COPY ./home/.zshenv		        ./.zshenv
 
 # Install node with nvm and sourcing
 RUN mkdir /usr/local/nvm
@@ -39,12 +36,13 @@ RUN curl https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash 
 	&& nvm use default
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
-RUN echo "source $NVM_DIR/nvm.sh" >> /root/.config/zsh/.zshrc
+RUN . $NVM_DIR/nvm.sh
 
 # Install rust and sourcing
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 RUN . $HOME/.cargo/env
-RUN echo "source $HOME/.cargo/env" >> /root/.config/zsh/.zshrc
+RUN . $HOME/.cargo/env
+## Dev tools installed #####
 
 # Make dockerfile waiting
 CMD ["tail", "-f", "/dev/null"]

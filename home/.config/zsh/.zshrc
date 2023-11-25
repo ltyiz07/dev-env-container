@@ -33,12 +33,26 @@ zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
 
 alias ll='ls -alFh --color=auto'
 
+# nvm
+[ -f $NVM_DIR/nvm.sh ] && source $NVM_DIR/nvm.sh
+# rust
+[ -f $HOME/.cargo/env ] && source $HOME/.cargo/env
+
+# fzf
+[ -f $ZDOTDIR/.fzf.zsh ] && source $ZDOTDIR/.fzf.zsh
+
+# zsh-syntax-highlighting
+[ -f $ZDOTDIR/plugin/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && source $ZDOTDIR/plugin/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+
+# Directory history
 setopt AUTO_PUSHD           # Push the current directory visited on the stack.
 setopt PUSHD_IGNORE_DUPS    # Do not store duplicates in the stack.
 setopt PUSHD_SILENT         # Do not print the directory stack after pushd or popd.
 alias d='dirs -v'
 for index ({1..9}) alias "$index"="cd +${index}"; unset index
 
+# Prompt
 fpath=($ZDOTDIR/prompt $fpath)
 autoload -Uz purity.zsh; purity.zsh
 
@@ -71,3 +85,4 @@ function tt() {
                 tmux switch -t $1
         fi
 }
+
