@@ -86,3 +86,5 @@ function tt() {
         fi
 }
 
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

@@ -1,5 +1,3 @@
-bin/fzf
-bin/fzf.exe
 dist
 target
 pkg
@@ -9,6 +7,5 @@ doc/tags
 vendor
 gopath
 *.zwc
-fzf
 tmp
 *.patch

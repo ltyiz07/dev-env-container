@@ -1,6 +1,11 @@
 FROM ubuntu:22.04
+
+RUN sed -i 's/kr.archive.ubuntu.com/mirror.kakao.com/g' /etc/apt/sources.list
 RUN apt-get -y update && apt-get -y upgrade
-RUN apt-get install -y \
+RUN apt-get -y install software-properties-common
+RUN apt-get -y update
+RUN add-apt-repository ppa:neovim-ppa/unstable
+RUN apt-get -y install\
 	netcat \
 	python3 \
 	git \
@@ -13,8 +18,8 @@ RUN apt-get install -y \
 	netcat \
 	locales \
 	zsh 
-RUN apt-get clean -y \
-	&& apt-get autoremove -y \
+RUN apt-get -y clean \
+	&& apt-get -y autoremove \
 	&& rm -rf /var/lib/apt/lists/*
 
 WORKDIR /root
