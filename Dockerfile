@@ -1,9 +1,7 @@
 FROM ubuntu:22.04
 RUN apt-get -y update && apt-get -y upgrade
 RUN apt-get install -y \
-
-	
-    netcat \
+	netcat \
 	python3 \
 	git \
 	neovim \
