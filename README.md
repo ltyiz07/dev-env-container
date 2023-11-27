@@ -24,6 +24,9 @@ Automate create development environment
 ### vscode
 * automate vscode connection
 
+### Java
+* add java JDK
+
 ## Copied parent config files
 
 * ~/.config/nvim
