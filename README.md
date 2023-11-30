@@ -12,6 +12,14 @@ To create docker container that contains development tools
 ### What?
 Automate create development environment
 
+### Preinstalled
+* nvim with keymaps
+* tmux with configs
+* cargo
+* nvm + node
+* fzf with key configs
+* zsh as default terminal
+
 ## Things to improve
 
 ### tmux
