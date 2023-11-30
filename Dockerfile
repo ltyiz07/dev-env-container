@@ -5,6 +5,7 @@ RUN apt-get -y update && apt-get -y upgrade
 RUN apt-get -y install software-properties-common
 RUN apt-get -y update
 RUN add-apt-repository ppa:neovim-ppa/unstable
+RUN apt-get -y update
 RUN apt-get -y install\
 	netcat \
 	python3 \
@@ -17,7 +18,8 @@ RUN apt-get -y install\
 	tmux \
 	netcat \
 	locales \
-	zsh 
+	zsh \
+	openjdk-19-jdk
 RUN apt-get -y clean \
 	&& apt-get -y autoremove \
 	&& rm -rf /var/lib/apt/lists/*
