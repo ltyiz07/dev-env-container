@@ -1,3 +1,7 @@
+ARG USER_ID
+ARG GROUP_ID
+ARG USER_NAME
+
 FROM ubuntu:22.04
 
 RUN sed -i 's/kr.archive.ubuntu.com/mirror.kakao.com/g' /etc/apt/sources.list
@@ -48,12 +52,15 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 ENV PATH $RUSTUP_HOME/bin:$PATH
 
 # Set user
-ARG USER_ID=1000
-ARG GROUP_ID=1000
-ARG USER_NAME=dever
+RUN echo 'root:root' | chpasswd
+ARG USER_ID
+ARG GROUP_ID
+ARG USER_NAME
 RUN groupadd -g ${GROUP_ID} ${USER_NAME} &&\
     useradd -l -u ${USER_ID} -g ${USER_NAME} ${USER_NAME} &&\
+    usermod -aG sudo ${USER_NAME} &&\
     install -d -m 0755 -o ${USER_NAME} -g ${USER_NAME} /home/${USER_NAME}
+RUN echo "${USER_NAME}:${USER_NAME}" | chpasswd
 USER ${USER_NAME}
 WORKDIR /home/${USER_NAME}
 
