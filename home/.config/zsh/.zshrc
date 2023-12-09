@@ -32,6 +32,7 @@ zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
 zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
 
 alias ll='ls -alFh --color=auto'
+alias tmux="TERM=xterm-256color tmux"
 
 # nvm
 [ -f $NVM_DIR/nvm.sh ] && source $NVM_DIR/nvm.sh

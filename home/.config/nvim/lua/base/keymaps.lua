@@ -1,8 +1,7 @@
-local map = require('base.utils.mapper').map
+local map = require("base.utils.mapper").map
 
 -- set leader key with: ;
 vim.g.mapleader = ";"
-
 
 -- open termianl with: :term
 --      back to normalmode from isertmode at term with: <C-\><C-n>
@@ -24,7 +23,7 @@ map("n", "<C-Down>", "<C-w>-")
 -- close buffer with: ctrl + w
 map("n", "<C-q>", "<Cmd>q<CR>")
 -- create new tab with: ctrl + n
-map("n", "<C-n>", "<Cmd>tabnew<CR>")
+map("n", "<C-t>", "<Cmd>tabnew<CR>")
 -- chnage between tabs with: alt + {h, l}
 map("n", "<A-l>", "gt")
 map("n", "<A-h>", "gT")
@@ -33,16 +32,14 @@ map("n", "<A-h>", "gT")
 map("n", "<A-k>", "<Cmd>bprevious<CR>")
 map("n", "<A-j>", "<Cmd>bnext<CR>")
 
-
 -- split current pane left with: leader + [s]plit + [l]eft
 map("n", "<leader>sl", "<Cmd>vert sb<CR>")
 -- split current pane right with: leader + [s]plit + [r]ight
- map("n", "<leader>sr", "<Cmd>vert belowright sb<CR>")
+map("n", "<leader>sr", "<Cmd>vert belowright sb<CR>")
 -- split current pane up with: leader + [s]plit + [u]p
 map("n", "<leader>su", "<Cmd>sb<CR>")
 -- split current pane down with: leader + [s]plit + [d]own
 map("n", "<leader>sd", "<Cmd>sb<CR><C-w>j")
-
 
 -- save current file with: ctrl + s
 map("n", "<C-s>", "<Cmd>w<CR>")
