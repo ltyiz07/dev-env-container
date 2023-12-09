@@ -1,9 +1,22 @@
 version: '3.1'
 services:
   development_env:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - USER_ID
+        - GROUP_ID
+        - USER_NAME
     image: young_development_env
     container_name: works_env
+    volumes:
+      - ../:/home/${USER_NAME}/works
+      - ./home/.zshenv:/home/${USER_NAME}/.zshenv
+      - ./home/.tmux.conf:/home/${USER_NAME}/.tmux.conf
+      - ./home/.gitconfig:/home/${USER_NAME}/.gitconfig
+      - ./home/.git-credentials:/home/${USER_NAME}/.git-credentials
+      - ./home/.config:/home/${USER_NAME}/.config
     ports: 
       - 8000:8000
       - 8001:8001
@@ -11,12 +24,5 @@ services:
       - 8003:8003
       - 8004:8004
       - 8005:8005
-    volumes:
-      - ../:/root/works
-      - ./home/.zshenv:/root/.zshenv
-      - ./home/.tmux.conf:/root/.tmux.conf
-      - ./home/.gitconfig:/root/.gitconfig
-      - ./home/.git-credentials:/root/.git-credentials
-      - ./home/.config:/root/.config
     extra_hosts:
       - "host.docker.internal:host-gateway"
