@@ -64,4 +64,5 @@ require("lazy").setup({
 			colorscheme = "gruvbox",
 		},
 	},
+	"ggandor/leap.nvim",
 })
