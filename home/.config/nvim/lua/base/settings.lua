@@ -26,10 +26,11 @@ vim.opt.termguicolors = true
 
 vim.opt.scrolloff = 4
 vim.opt.signcolumn = "auto"
-vim.api.nvim_set_hl(0, 'LineNr', { fg='black' })
 vim.opt.isfname:append("@-@")
 
 vim.opt.updatetime = 50
 vim.opt.clipboard = "unnamedplus"
 
 vim.useSystemClipboard = true
+
+
