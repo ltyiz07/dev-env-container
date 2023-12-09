@@ -12,11 +12,11 @@ services:
       - 8004:8004
       - 8005:8005
     volumes:
-      - ../:/root/works
-      - ./home/.zshenv:/root/.zshenv
-      - ./home/.tmux.conf:/root/.tmux.conf
-      - ./home/.gitconfig:/root/.gitconfig
-      - ./home/.git-credentials:/root/.git-credentials
-      - ./home/.config:/root/.config
+      - ../:/home/dever/works
+      - ./home/.zshenv:/home/dever/.zshenv
+      - ./home/.tmux.conf:/home/dever/.tmux.conf
+      - ./home/.gitconfig:/home/dever/.gitconfig
+      - ./home/.git-credentials:/home/dever/.git-credentials
+      - ./home/.config:/home/dever/.config
     extra_hosts:
       - "host.docker.internal:host-gateway"
