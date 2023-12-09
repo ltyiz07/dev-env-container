@@ -17,13 +17,28 @@ require("lazy").setup({
     {
         'nvim-telescope/telescope.nvim', tag = '0.1.5', dependencies =  {'nvim-lua/plenary.nvim'} 
     },
-    'nvim-treesitter/nvim-treesitter',
-
-    { "ellisonleao/gruvbox.nvim", priority = 1000 , config = true},
     {
-        "LazyVim/LazyVim",
-        opts = {
-            colorscheme = "gruvbox",
-        },
+        "nvim-treesitter/nvim-treesitter",
+        build = ":TSUpdate",
+        config = function () 
+            local configs = require("nvim-treesitter.configs")
+            configs.setup({
+                ensure_installed = {
+                    "c", "lua", "vim", "vimdoc", "query", "elixir", "heex", "javascript", "html",
+                    "rust", "typescript", "java", "python",
+                },
+                sync_install = false,
+                highlight = { enable = true },
+                indent = { enable = true },  
+            })
+        end
     },
+    "williamboman/mason.nvim",
+    'neovim/nvim-lspconfig', -- Collection of configurations for built-in LSP client
+    'hrsh7th/nvim-cmp', -- Autocompletion plugin
+    'hrsh7th/cmp-nvim-lsp', -- LSP source for nvim-cmp
+    'saadparwaiz1/cmp_luasnip', -- Snippets source for nvim-cmp
+    'L3MON4D3/LuaSnip', -- Snippets plugin
+    { 'stevearc/conform.nvim', event = { "BufReadPre", "BufNewFile" }, },
+    { "ellisonleao/gruvbox.nvim", priority = 1000 , config = true},
 })
