@@ -87,5 +87,4 @@ function tt() {
         fi
 }
 
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+[ -f $ZDOTDIR/.fzf.zsh ] && source $ZDOTDIR/.fzf.zsh

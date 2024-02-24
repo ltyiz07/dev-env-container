@@ -58,11 +58,13 @@ require("lazy").setup({
 	{ "stevearc/conform.nvim", event = { "BufReadPre", "BufNewFile" } },
 
 	{ "ellisonleao/gruvbox.nvim", priority = 1000, config = true },
+	--[[
 	{
 		"LazyVim/LazyVim",
 		opts = {
 			colorscheme = "gruvbox",
 		},
 	},
+    --]]
 	"ggandor/leap.nvim",
 })
