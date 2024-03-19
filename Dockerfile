@@ -22,11 +22,11 @@ RUN apt-get -y clean \
 	&& apt-get -y autoremove \
 	&& rm -rf /var/lib/apt/lists/*
 
-WORKDIR /root
-
 # Set locale as Korea
 RUN locale-gen ko_KR.UTF-8
 ENV LC_ALL ko_KR.UTF-8
+
+WORKDIR /root
 
 # Install node with nvm and sourcing
 RUN mkdir /usr/local/nvm
@@ -46,6 +46,8 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 RUN . $HOME/.cargo/env
 RUN . $HOME/.cargo/env
 ## Dev tools installed #####
+
+RUN echo 'root:Docker!' | chpasswd
 
 # Make dockerfile waiting
 CMD ["tail", "-f", "/dev/null"]

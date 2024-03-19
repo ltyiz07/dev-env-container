@@ -4,6 +4,7 @@ services:
     build: .
     image: young_development_env
     container_name: works_env
+    user: ${USER_ID}:${GROUP_ID}
     ports: 
       - 8000:8000
       - 8001:8001
@@ -18,5 +19,7 @@ services:
       - ./home/.gitconfig:/root/.gitconfig
       - ./home/.git-credentials:/root/.git-credentials
       - ./home/.config:/root/.config
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
