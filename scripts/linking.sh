@@ -20,3 +20,4 @@ ln -s $ZSH_CONFIG_DIR ~/.config/zsh
 #nvim config
 NVIM_CONFIG_DIR=$(readlink -f "$SCRIPT_DIR/../home/.config/nvim")
 ln -s $NVIM_CONFIG_DIR ~/.config/nvim
+

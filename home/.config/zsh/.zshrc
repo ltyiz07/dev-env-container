@@ -58,25 +58,15 @@ fpath=($ZDOTDIR/prompt $fpath)
 autoload -Uz purity.zsh; purity.zsh
 
 # tmux
-alias tn='function name_tmux() {
-  read "session_name?Enter session name: "
-  tmux new -s "$session_name"
+alias tn='function tmux_session_with_name() {
+  tmux list-sessions
+  read "SESSION_NAME?Attach: "
+  tmux new-session -A -s "$SESSION_NAME"
 }
-name_tmux'
+tmux_session_with_name'
 alias tl='tmux ls'                    # session list
 alias td='tmux detach'                # detatch session
 alias tk='tmux kill-session -t '      # kill session
-alias t4='function my_t4() {
-  read "session_name?Enter session name: "
-  tmux -u new-session -d -s "$session_name"
-  tmux split-window -v
-  tmux split-window -h
-  tmux select-pane -U
-  tmux split-window -h
-  tmux select-pane -L
-  tmux attach-session -d
-}
-my_t4'
 function tt() {
         if [ -z “$1” ]; then
                 tmux
