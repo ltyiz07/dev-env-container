@@ -67,4 +67,6 @@ require("lazy").setup({
 	},
     --]]
 	"ggandor/leap.nvim",
+
+	"keaising/im-select.nvim",
 })
