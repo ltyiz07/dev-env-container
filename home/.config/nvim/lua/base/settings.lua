@@ -37,7 +37,7 @@ vim.opt.clipboard = "unnamedplus"
 
 vim.useSystemClipboard = true
 
-vim.cmd([[language en_US.UTF-8]])
+-- vim.cmd([[language en_US.UTF-8]])
 
 vim.cmd([[ au TextYankPost * silent! lua vim.highlight.on_yank {higroup="IncSearch", timeout=200, on_visul=true} ]])
 

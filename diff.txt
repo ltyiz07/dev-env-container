@@ -1,0 +1,1103 @@
+diff --git a/.env b/.env
+deleted file mode 100644
+index 91dfc26..0000000
+--- a/.env
++++ /dev/null
+@@ -1,4 +0,0 @@
+-HOST_WORK_DIR="/home/tailor/works"
+-
+-USER_ID=1000
+-GROUP_ID=1000
+diff --git a/.gitignore b/.gitignore
+index 7a00516..c5bd338 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -1,2 +1,3 @@
+ .zcompdump
+ .zsh_history
++home/.config/nvim/lazy-lock.json
+diff --git a/.gitmodules b/.gitmodules
+new file mode 100644
+index 0000000..5b83ad9
+--- /dev/null
++++ b/.gitmodules
+@@ -0,0 +1,3 @@
++[submodule "neovim"]
++	path = neovim
++	url = https://github.com/neovim/neovim.git
+diff --git a/Dockerfile b/Dockerfile
+index 5984ee1..de40e66 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -1,3 +1,7 @@
++ARG USER_ID
++ARG GROUP_ID
++ARG USER_NAME
++
+ FROM ubuntu:22.04
+ 
+ RUN sed -i 's/kr.archive.ubuntu.com/mirror.kakao.com/g' /etc/apt/sources.list
+@@ -5,6 +9,7 @@ RUN apt-get -y update && apt-get -y upgrade
+ RUN apt-get -y install software-properties-common
+ RUN apt-get -y update
+ RUN add-apt-repository ppa:neovim-ppa/unstable
++RUN apt-get -y update
+ RUN apt-get -y install\
+ 	netcat \
+ 	python3 \
+@@ -17,7 +22,8 @@ RUN apt-get -y install\
+ 	tmux \
+ 	netcat \
+ 	locales \
+-	zsh 
++	zsh \
++	openjdk-19-jdk
+ RUN apt-get -y clean \
+ 	&& apt-get -y autoremove \
+ 	&& rm -rf /var/lib/apt/lists/*
+@@ -26,8 +32,6 @@ RUN apt-get -y clean \
+ RUN locale-gen ko_KR.UTF-8
+ ENV LC_ALL ko_KR.UTF-8
+ 
+-WORKDIR /root
+-
+ # Install node with nvm and sourcing
+ RUN mkdir /usr/local/nvm
+ ENV NVM_DIR /usr/local/nvm
+@@ -39,15 +43,30 @@ RUN curl https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
+ 	&& nvm use default
+ ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
+ ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+-RUN . $NVM_DIR/nvm.sh
+ 
+ # Install rust and sourcing
++RUN mkdir /usr/local/rust
++ENV RUSTUP_HOME /usr/local/rust
++ENV CARGO_HOME /usr/local/rust
+ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+-RUN . $HOME/.cargo/env
+-RUN . $HOME/.cargo/env
+-## Dev tools installed #####
++ENV PATH $RUSTUP_HOME/bin:$PATH
++
++# Set user
++RUN echo 'root:root' | chpasswd
++ARG USER_ID
++ARG GROUP_ID
++ARG USER_NAME
++RUN groupadd -g ${GROUP_ID} ${USER_NAME} &&\
++    useradd -l -u ${USER_ID} -g ${USER_NAME} ${USER_NAME} &&\
++    usermod -aG sudo ${USER_NAME} &&\
++    install -d -m 0755 -o ${USER_NAME} -g ${USER_NAME} /home/${USER_NAME}
++RUN echo "${USER_NAME}:${USER_NAME}" | chpasswd
++USER ${USER_NAME}
++WORKDIR /home/${USER_NAME}
+ 
+-RUN echo 'root:Docker!' | chpasswd
++# Set envs
++RUN . $NVM_DIR/nvm.sh
++RUN . $RUSTUP_HOME/env
+ 
+ # Make dockerfile waiting
+ CMD ["tail", "-f", "/dev/null"]
+diff --git a/README.md b/README.md
+index 98655c1..c7bc419 100644
+--- a/README.md
++++ b/README.md
+@@ -22,16 +22,27 @@ Automate create development environment
+ 
+ ## Things to improve
+ 
++### docker container
++* Map container root to host user
++
+ ### tmux
+ * consider pause container to retain tmux sessions
+ * update envs scripts
+ 
+ ### neovim
+ * neovim version support (install latest automatically)
+-
++* auto completion
++* auto format code
++* jump to implementation
++* find all from source code
++* change all import directory
++ 
+ ### vscode
+ * automate vscode connection
+ 
++### Java
++* add java JDK
++
+ ## Copied parent config files
+ 
+ * ~/.config/nvim
+@@ -40,3 +51,8 @@ Automate create development environment
+ * ~/.git-credentials
+ * ~/.zshenv
+ * ~/.config/zsh
++
++
++TODO: 
++* create container user and assign it as host user id
++* set container user as root inside container (set as su user)
+diff --git a/bin/nvim b/bin/nvim
+new file mode 100755
+index 0000000..2e0354e
+Binary files /dev/null and b/bin/nvim differ
+diff --git a/docker-compose.yml b/docker-compose.yml
+index e3eb8a9..8e26fef 100755
+--- a/docker-compose.yml
++++ b/docker-compose.yml
+@@ -1,10 +1,22 @@
+ version: '3.1'
+ services:
+   development_env:
+-    build: .
++    build:
++      context: .
++      dockerfile: Dockerfile
++      args:
++        - USER_ID
++        - GROUP_ID
++        - USER_NAME
+     image: young_development_env
+     container_name: works_env
+-    user: ${USER_ID}:${GROUP_ID}
++    volumes:
++      - ../:/home/${USER_NAME}/works
++      - ./home/.zshenv:/home/${USER_NAME}/.zshenv
++      - ./home/.tmux.conf:/home/${USER_NAME}/.tmux.conf
++      - ./home/.gitconfig:/home/${USER_NAME}/.gitconfig
++      - ./home/.git-credentials:/home/${USER_NAME}/.git-credentials
++      - ./home/.config:/home/${USER_NAME}/.config
+     ports: 
+       - 8000:8000
+       - 8001:8001
+@@ -12,14 +24,5 @@ services:
+       - 8003:8003
+       - 8004:8004
+       - 8005:8005
+-    volumes:
+-      - ../:/root/works
+-      - ./home/.zshenv:/root/.zshenv
+-      - ./home/.tmux.conf:/root/.tmux.conf
+-      - ./home/.gitconfig:/root/.gitconfig
+-      - ./home/.git-credentials:/root/.git-credentials
+-      - ./home/.config:/root/.config
+-      - /etc/passwd:/etc/passwd:ro
+-      - /etc/group:/etc/group:ro
+     extra_hosts:
+       - "host.docker.internal:host-gateway"
+diff --git a/home/.config/nvim/after/plugin/colorschema.lua b/home/.config/nvim/after/plugin/colorschema.lua
+new file mode 100644
+index 0000000..d9dd7d5
+--- /dev/null
++++ b/home/.config/nvim/after/plugin/colorschema.lua
+@@ -0,0 +1,7 @@
++require("gruvbox").setup({
++	overrides = {
++		SignColumn = { bg = "#ff9900" },
++	},
++})
++vim.cmd("colorscheme gruvbox")
++vim.api.nvim_set_hl(0, "LineNr", { fg = "grey" })
+diff --git a/home/.config/nvim/after/plugin/formatter.lua b/home/.config/nvim/after/plugin/formatter.lua
+new file mode 100644
+index 0000000..89491d9
+--- /dev/null
++++ b/home/.config/nvim/after/plugin/formatter.lua
+@@ -0,0 +1,56 @@
++local conform = require("conform")
++conform.setup({
++	format_on_save = function(bufnr)
++		-- Disable with a global or buffer-local variable
++		if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
++			return
++		end
++		return { timeout_ms = 300, lsp_fallback = true }
++	end,
++	formatters_by_ft = {
++		javascript = { "prettier" },
++		typescript = { "prettier" },
++		javascriptreact = { "prettier" },
++		typescriptreact = { "prettier" },
++		svelte = { "prettier" },
++		css = { "prettier" },
++		html = { "prettier" },
++		json = { "prettier" },
++		yaml = { "prettier" },
++		markdown = { "prettier" },
++		graphql = { "prettier" },
++		lua = { "stylua" },
++		python = { "isort", "black", "autopep8" },
++	},
++	format_on_save = {
++		lsp_fallback = true,
++		async = false,
++		timeout_ms = 500,
++	},
++})
++
++vim.api.nvim_create_user_command("FormatDisable", function(args)
++	if args.bang then
++		-- FormatDisable! will disable formatting just for this buffer
++		vim.b.disable_autoformat = true
++	else
++		vim.g.disable_autoformat = true
++	end
++end, {
++	desc = "Disable autoformat-on-save",
++	bang = true,
++})
++vim.api.nvim_create_user_command("FormatEnable", function()
++	vim.b.disable_autoformat = false
++	vim.g.disable_autoformat = false
++end, {
++	desc = "Re-enable autoformat-on-save",
++})
++
++vim.keymap.set({ "n", "v" }, "<leader>mp", function()
++	conform.format({
++		lsp_fallback = true,
++		async = false,
++		timeout_ms = 500,
++	})
++end, { desc = "Format file or range (in visual mode)" })
+diff --git a/home/.config/nvim/after/plugin/leap.lua b/home/.config/nvim/after/plugin/leap.lua
+new file mode 100644
+index 0000000..bb92dfa
+--- /dev/null
++++ b/home/.config/nvim/after/plugin/leap.lua
+@@ -0,0 +1,19 @@
++local vim = vim
++local leap = require("leap")
++
++leap.opts.case_sensitive = true
++leap.opts.special_keys = {
++	next_target = "<enter>",
++	prev_target = "<tab>",
++	next_group = "<space>",
++	prev_group = "<tab>",
++	multi_accept = "<enter>",
++	multi_revert = "<backspace>",
++}
++
++vim.keymap.set("n", "<leader>j", function()
++	local focusable_windows_on_tabpage = vim.tbl_filter(function(win)
++		return vim.api.nvim_win_get_config(win).focusable
++	end, vim.api.nvim_tabpage_list_wins(0))
++	require("leap").leap({ target_windows = focusable_windows_on_tabpage })
++end)
+diff --git a/home/.config/nvim/after/plugin/lsp.lua b/home/.config/nvim/after/plugin/lsp.lua
+new file mode 100644
+index 0000000..35baea5
+--- /dev/null
++++ b/home/.config/nvim/after/plugin/lsp.lua
+@@ -0,0 +1,65 @@
++-- Add additional capabilities supported by nvim-cmp
++local capabilities = require("cmp_nvim_lsp").default_capabilities()
++
++local lspconfig = require("lspconfig")
++
++-- Enable some language servers with the additional completion capabilities offered by nvim-cmp
++local servers = {
++	"clangd",
++	"rust_analyzer",
++	"pyright",
++	"tsserver",
++	"lua-language-server",
++}
++for _, lsp in ipairs(servers) do
++	lspconfig.lua_ls.setup({
++		-- on_attach = my_custom_on_attach,
++		capabilities = capabilities,
++	})
++end
++
++local luasnip = require("luasnip")
++
++-- nvim-cmp setup
++local cmp = require("cmp")
++cmp.setup({
++	snippet = {
++		expand = function(args)
++			luasnip.lsp_expand(args.body)
++		end,
++	},
++	mapping = cmp.mapping.preset.insert({
++		["<C-n>"] = cmp.mapping(cmp.mapping.select_next_item(), { "i", "c" }),
++		["<C-p>"] = cmp.mapping(cmp.mapping.select_prev_item(), { "i", "c" }),
++		["<C-u>"] = cmp.mapping.scroll_docs(-4), -- Up
++		["<C-d>"] = cmp.mapping.scroll_docs(4), -- Down
++		-- C-b (back) C-f (forward) for snippet placeholder navigation.
++		["<C-Space>"] = cmp.mapping.complete(),
++		["<CR>"] = cmp.mapping.confirm({
++			behavior = cmp.ConfirmBehavior.Replace,
++			select = true,
++		}),
++		["<Tab>"] = cmp.mapping(function(fallback)
++			if cmp.visible() then
++				cmp.select_next_item()
++			elseif luasnip.expand_or_jumpable() then
++				luasnip.expand_or_jump()
++			else
++				fallback()
++			end
++		end, { "i", "s" }),
++		["<S-Tab>"] = cmp.mapping(function(fallback)
++			if cmp.visible() then
++				cmp.select_prev_item()
++			elseif luasnip.jumpable(-1) then
++				luasnip.jump(-1)
++			else
++				fallback()
++			end
++		end, { "i", "s" }),
++	}),
++	sources = {
++		{ name = "nvim_lsp" },
++		{ name = "luasnip" },
++	},
++})
+diff --git a/home/.config/nvim/after/plugin/mason.lua b/home/.config/nvim/after/plugin/mason.lua
+new file mode 100644
+index 0000000..c7cf553
+--- /dev/null
++++ b/home/.config/nvim/after/plugin/mason.lua
+@@ -0,0 +1,20 @@
++require("mason").setup({
++	ui = {
++		icons = {
++			package_installed = "✓",
++			package_pending = "➜",
++			package_uninstalled = "✗",
++		},
++	},
++})
++
++require("mason-tool-installer").setup({
++	ensure_installed = {
++		"prettier", -- prettier formatter
++		"stylua", -- lua formatter
++		"isort", -- python formatter
++		"black", -- python formatter
++		"pylint", -- python linter
++		"eslint_d", -- js linter
++	},
++})
+diff --git a/home/.config/nvim/after/plugin/treesitter.lua b/home/.config/nvim/after/plugin/treesitter.lua
+new file mode 100644
+index 0000000..e69de29
+diff --git a/home/.config/nvim/init.lua b/home/.config/nvim/init.lua
+index 86cbb2b..d3c1589 100644
+--- a/home/.config/nvim/init.lua
++++ b/home/.config/nvim/init.lua
+@@ -1 +1 @@
+-require('base')
++require("base")
+diff --git a/home/.config/nvim/lazy-lock.json b/home/.config/nvim/lazy-lock.json
+new file mode 100644
+index 0000000..bb2a85c
+--- /dev/null
++++ b/home/.config/nvim/lazy-lock.json
+@@ -0,0 +1,18 @@
++{
++  "LuaSnip": { "branch": "master", "commit": "03c8e67eb7293c404845b3982db895d59c0d1538" },
++  "cmp-nvim-lsp": { "branch": "main", "commit": "5af77f54de1b16c34b23cba810150689a3a90312" },
++  "cmp_luasnip": { "branch": "master", "commit": "05a9ab28b53f71d1aece421ef32fee2cb857a843" },
++  "conform.nvim": { "branch": "master", "commit": "820eec990d5f332d30cf939954c8672a43a0459e" },
++  "gruvbox.nvim": { "branch": "main", "commit": "6e4027ae957cddf7b193adfaec4a8f9e03b4555f" },
++  "lazy.nvim": { "branch": "main", "commit": "31ddbea7c10b6920c9077b66c97951ca8682d5c8" },
++  "leap.nvim": { "branch": "main", "commit": "626be4c4ec040aeaf6466c9aae17ee0ab09f1a5b" },
++  "mason-tool-installer.nvim": { "branch": "main", "commit": "b129892f783740e6cf741f2ea09fa5dd512aa584" },
++  "mason.nvim": { "branch": "main", "commit": "751b1fcbf3d3b783fcf8d48865264a9bcd8f9b10" },
++  "nerdtree": { "branch": "master", "commit": "f3a4d8eaa8ac10305e3d53851c976756ea9dc8e8" },
++  "nvim-cmp": { "branch": "main", "commit": "ce16de5665c766f39c271705b17fff06f7bcb84f" },
++  "nvim-lspconfig": { "branch": "master", "commit": "9266dc26862d8f3556c2ca77602e811472b4c5b8" },
++  "nvim-treesitter": { "branch": "master", "commit": "b350369740e885c85f0f62dd8fe645c6f887ddc6" },
++  "plenary.nvim": { "branch": "master", "commit": "8aad4396840be7fc42896e3011751b7609ca4119" },
++  "telescope.nvim": { "branch": "master", "commit": "d90956833d7c27e73c621a61f20b29fdb7122709" },
++  "undotree": { "branch": "master", "commit": "56c684a805fe948936cda0d1b19505b84ad7e065" }
++}
+\ No newline at end of file
+diff --git a/home/.config/nvim/lazyvim.json b/home/.config/nvim/lazyvim.json
+new file mode 100644
+index 0000000..ff6a139
+--- /dev/null
++++ b/home/.config/nvim/lazyvim.json
+@@ -0,0 +1,9 @@
++{
++  "extras": [
++
++  ],
++  "news": {
++    "NEWS.md": "2123"
++  },
++  "version": 2
++}
+\ No newline at end of file
+diff --git a/home/.config/nvim/lua/base/init.lua b/home/.config/nvim/lua/base/init.lua
+index c68db91..6ff94f8 100644
+--- a/home/.config/nvim/lua/base/init.lua
++++ b/home/.config/nvim/lua/base/init.lua
+@@ -1,6 +1,7 @@
+-require('base.keymaps')
++require("base.keymaps")
+ 
+-require('base.settings')
++require("base.settings")
+ 
+-require('base.plugins')
++require("base.plugins")
+ 
++compare = require("base.methods.comapare")
+diff --git a/home/.config/nvim/lua/base/keymaps.lua b/home/.config/nvim/lua/base/keymaps.lua
+index 79ba92c..a6186b8 100644
+--- a/home/.config/nvim/lua/base/keymaps.lua
++++ b/home/.config/nvim/lua/base/keymaps.lua
+@@ -1,9 +1,8 @@
+-local map = require('base.utils.mapper').map
++local map = require("base.utils.mapper").map
+ 
+ -- set leader key with: ;
+ vim.g.mapleader = ";"
+ 
+-
+ -- open termianl with: :term
+ --      back to normalmode from isertmode at term with: <C-\><C-n>
+ 
+@@ -24,7 +23,7 @@ map("n", "<C-Down>", "<C-w>-")
+ -- close buffer with: ctrl + w
+ map("n", "<C-q>", "<Cmd>q<CR>")
+ -- create new tab with: ctrl + n
+-map("n", "<C-n>", "<Cmd>tabnew<CR>")
++map("n", "<C-t>", "<Cmd>tabnew<CR>")
+ -- chnage between tabs with: alt + {h, l}
+ map("n", "<A-l>", "gt")
+ map("n", "<A-h>", "gT")
+@@ -33,17 +32,15 @@ map("n", "<A-h>", "gT")
+ map("n", "<A-k>", "<Cmd>bprevious<CR>")
+ map("n", "<A-j>", "<Cmd>bnext<CR>")
+ 
+-
+ -- split current pane left with: leader + [s]plit + [l]eft
+ map("n", "<leader>sl", "<Cmd>vert sb<CR>")
+ -- split current pane right with: leader + [s]plit + [r]ight
+- map("n", "<leader>sr", "<Cmd>vert belowright sb<CR>")
++map("n", "<leader>sr", "<Cmd>vert belowright sb<CR>")
+ -- split current pane up with: leader + [s]plit + [u]p
+ map("n", "<leader>su", "<Cmd>sb<CR>")
+ -- split current pane down with: leader + [s]plit + [d]own
+ map("n", "<leader>sd", "<Cmd>sb<CR><C-w>j")
+ 
+-
+ -- save current file with: ctrl + s
+ map("n", "<C-s>", "<Cmd>w<CR>")
+ map("i", "<C-s>", "<Cmd>w<CR>")
+diff --git a/home/.config/nvim/lua/base/methods/comapare.lua b/home/.config/nvim/lua/base/methods/comapare.lua
+new file mode 100644
+index 0000000..f040a9f
+--- /dev/null
++++ b/home/.config/nvim/lua/base/methods/comapare.lua
+@@ -0,0 +1,15 @@
++--lua local lines = vim.fn.getline(1, 10); print(table.concat(lines, '\n'))
++
++local M = {}
++
++function M.compare_clipboard()
++	local vstart = vim.fn.getpos("'<")
++	local vend = vim.fn.getpos("'>")
++	local line_start = vstart[2]
++	local line_end = vend[2]
++	-- or use api.nvim_buf_get_lines
++	--local lines = vim.fn.getline(line_start, line_end)
++	local lines = vim.fn.getline(line_start, line_end)
++	print(table.concat(lines, "\n"))
++end
++return M
+diff --git a/home/.config/nvim/lua/base/plugins.lua b/home/.config/nvim/lua/base/plugins.lua
+index 8242845..8cb4e43 100644
+--- a/home/.config/nvim/lua/base/plugins.lua
++++ b/home/.config/nvim/lua/base/plugins.lua
+@@ -1,93 +1,70 @@
+-local fn = vim.fn
+-
+--- ensure that packer is installed
+-
+-local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
+-if fn.empty(fn.glob(install_path)) > 0 then
+-  PACKER_BOOTSTRAP = fn.system({'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path})
+-  print("Installing packer close and reopen Neovim...")
+-end
+-
+--- Autocommand that reloads neovim whenever you save the plugins.lua file
+-vim.cmd([[
+-  augroup packer_user_config
+-    autocmd!
+-    autocmd BufWritePost plugins.lua source <afile> | PackerSync
+-  augroup end
+-]])
+-
+--- Use a protected call so we don't error out on first use
+-local status_ok, packer = pcall(require, "packer")
+-if not status_ok then
+-  return
++local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
++if not vim.loop.fs_stat(lazypath) then
++	vim.fn.system({
++		"git",
++		"clone",
++		"--filter=blob:none",
++		"https://github.com/folke/lazy.nvim.git",
++		"--branch=stable", -- latest stable release
++		lazypath,
++	})
+ end
++vim.opt.rtp:prepend(lazypath)
+ 
+--- Have packer use a popup window
+-packer.init({
+-    display = {
+-      open_fn = function()
+-        return require('packer.util').float({ border = 'single' })
+-      end
+-    }
+-  }
+-)
+-
+---- startup and add configure plugins
+-return packer.startup(function(use)
+-    -- use 'neovim/nvim-lspconfig'
+-    use 'wbthomason/packer.nvim' -- Have packer manage itself
+-    use 'mbbill/undotree'
+-    use 'preservim/nerdtree'
+-
+-    --use 'vim-airline/vim-airline'
+-    --use 'vim-airline/vim-airline-themes'
+-    
+-    --[[
+-    --use "nvim-lua/popup.nvim" -- An implementation of the Popup API from vim in Neovim
+-    use ({
+-        'savq/melange-nvim',
+-        commit = '78af754ad22828ea3558e2990326b8aa39730918'
+-    })
+-    use {
+-        'nvim-telescope/telescope.nvim', tag = '0.1.1',
+-        -- or                            , branch = '0.1.x',
+-        requires = { {'nvim-lua/plenary.nvim'} }
+-    }
+-    use {
+-        'nvim-treesitter/nvim-treesitter',
+-        run = function()
+-        local ts_update = require('nvim-treesitter.install').update({ with_sync = true })
+-        ts_update()
+-        end,
+-    }
+-
+-    use {
+-        'VonHeikemen/lsp-zero.nvim',
+-        branch = 'v2.x',
+-        requires = {
+-            -- LSP Support
+-            {'neovim/nvim-lspconfig'},             -- Required
+-            {                                      -- Optional
+-                'williamboman/mason.nvim',
+-                run = function()
+-                    pcall(vim.cmd, 'MasonUpdate')
+-                end,
+-            },
+-            {'williamboman/mason-lspconfig.nvim'}, -- Optional
+-            -- Autocompletion
+-            {'hrsh7th/nvim-cmp'},     -- Required
+-            {'hrsh7th/cmp-nvim-lsp'}, -- Required
+-            {'L3MON4D3/LuaSnip'},     -- Required
+-        }
+-    }
++require("lazy").setup({
++	"mbbill/undotree",
++	"preservim/nerdtree",
++	{
++		"nvim-telescope/telescope.nvim",
++		tag = "0.1.5",
++		dependencies = { "nvim-lua/plenary.nvim" },
++	},
++	{
++		"nvim-treesitter/nvim-treesitter",
++		build = ":TSUpdate",
++		config = function()
++			local configs = require("nvim-treesitter.configs")
++			configs.setup({
++				ensure_installed = {
++					"c",
++					"lua",
++					"vim",
++					"vimdoc",
++					"query",
++					"elixir",
++					"heex",
++					"javascript",
++					"html",
++					"rust",
++					"typescript",
++					"java",
++					"python",
++				},
++				sync_install = false,
++				highlight = { enable = true },
++				indent = { enable = true },
++			})
++		end,
++	},
++	{
++		"williamboman/mason.nvim",
++		dependencies = { "WhoIsSethDaniel/mason-tool-installer.nvim" },
++	},
++	"neovim/nvim-lspconfig", -- Collection of configurations for built-in LSP client
++	"hrsh7th/nvim-cmp", -- Autocompletion plugin
++	"hrsh7th/cmp-nvim-lsp", -- LSP source for nvim-cmp
++	"saadparwaiz1/cmp_luasnip", -- Snippets source for nvim-cmp
++	"L3MON4D3/LuaSnip", -- Snippets plugin
++	{ "stevearc/conform.nvim", event = { "BufReadPre", "BufNewFile" } },
+ 
+-    use { 'ggandor/leap.nvim' }
+-    use { 'mhartington/formatter.nvim' }
+-    -- Automatically set up your configuration after cloning packer.nvim
+-    -- Put this at the end after all plugins
++	{ "ellisonleao/gruvbox.nvim", priority = 1000, config = true },
++	--[[
++	{
++		"LazyVim/LazyVim",
++		opts = {
++			colorscheme = "gruvbox",
++		},
++	},
+     --]]
+-    
+-    if PACKER_BOOTSTRAP then
+-        require('packer').sync()
+-    end
+-end)
++	"ggandor/leap.nvim",
++})
+diff --git a/home/.config/nvim/lua/base/settings.lua b/home/.config/nvim/lua/base/settings.lua
+index 91746e9..3d80cdc 100644
+--- a/home/.config/nvim/lua/base/settings.lua
++++ b/home/.config/nvim/lua/base/settings.lua
+@@ -1,19 +1,20 @@
++local vim = vim
++
+ -- Disable netrw
+ vim.g.loaded_netrw = 1
+ vim.g.loaded_netrwPlugin = 1
+ 
+-vim.opt.nu = true
++vim.opt.number = true
+ 
+ vim.opt.tabstop = 4
+ vim.opt.softtabstop = 4
+ vim.opt.shiftwidth = 4
++
+ vim.opt.expandtab = true
+ 
+ vim.opt.smartindent = true
+ 
+-vim.opt.wrap = true
+-vim.opt.linebreak = true
+-vim.opt.cursorline = true
++vim.opt.wrap = false
+ 
+ vim.opt.swapfile = false
+ vim.opt.backup = false
+@@ -28,10 +29,18 @@ vim.opt.termguicolors = true
+ 
+ vim.opt.scrolloff = 4
+ vim.opt.signcolumn = "auto"
+-vim.api.nvim_set_hl(0, 'LineNr', { fg='black' })
++-- vim.api.nvim_set_hl(0, 'LineNr', { fg='grey' })
+ vim.opt.isfname:append("@-@")
+ 
+ vim.opt.updatetime = 50
+ vim.opt.clipboard = "unnamedplus"
+ 
+ vim.useSystemClipboard = true
++
++-- vim.cmd([[language en_US.UTF-8]])
++
++vim.cmd([[ au TextYankPost * silent! lua vim.highlight.on_yank {higroup="IncSearch", timeout=200, on_visul=true} ]])
++
++vim.cmd(
++	[[set langmap=ㅂqㅈwㄷeㄱrㅅtㅛyㅕuㅑiㅐoㅔpㅁaㄴsㅇdㄹfㅎgㅗhㅓjㅏkㅣlㅋzㅌxㅊcㅍvㅠbㅜnㅡm]]
++)
+diff --git a/home/.config/nvim/lua/base/utils/mapper.lua b/home/.config/nvim/lua/base/utils/mapper.lua
+index 1421fed..ebb251f 100644
+--- a/home/.config/nvim/lua/base/utils/mapper.lua
++++ b/home/.config/nvim/lua/base/utils/mapper.lua
+@@ -1,12 +1,12 @@
+ local M = {}
+ function M.map(mode, lhs, rhs, opts)
+-    local options = { noremap = true, silent = true }
+-    if opts then
+-        if opts.desc then
+-            opts.desc = "keymaps.lua: " .. opts.desc
+-        end
+-        options = vim.tbl_extend('force', options, opts)
+-    end
+-    vim.api.nvim_set_keymap(mode, lhs, rhs, options)
++	local options = { noremap = true, silent = true }
++	if opts then
++		if opts.desc then
++			opts.desc = "keymaps.lua: " .. opts.desc
++		end
++		options = vim.tbl_extend("force", options, opts)
++	end
++	vim.api.nvim_set_keymap(mode, lhs, rhs, options)
+ end
+ return M
+diff --git a/home/.config/nvim/plugin/packer_compiled.lua b/home/.config/nvim/plugin/packer_compiled.lua
+deleted file mode 100644
+index 97f2707..0000000
+--- a/home/.config/nvim/plugin/packer_compiled.lua
++++ /dev/null
+@@ -1,109 +0,0 @@
+--- Automatically generated packer.nvim plugin loader code
+-
+-if vim.api.nvim_call_function('has', {'nvim-0.5'}) ~= 1 then
+-  vim.api.nvim_command('echohl WarningMsg | echom "Invalid Neovim version for packer.nvim! | echohl None"')
+-  return
+-end
+-
+-vim.api.nvim_command('packadd packer.nvim')
+-
+-local no_errors, error_msg = pcall(function()
+-
+-_G._packer = _G._packer or {}
+-_G._packer.inside_compile = true
+-
+-local time
+-local profile_info
+-local should_profile = false
+-if should_profile then
+-  local hrtime = vim.loop.hrtime
+-  profile_info = {}
+-  time = function(chunk, start)
+-    if start then
+-      profile_info[chunk] = hrtime()
+-    else
+-      profile_info[chunk] = (hrtime() - profile_info[chunk]) / 1e6
+-    end
+-  end
+-else
+-  time = function(chunk, start) end
+-end
+-
+-local function save_profiles(threshold)
+-  local sorted_times = {}
+-  for chunk_name, time_taken in pairs(profile_info) do
+-    sorted_times[#sorted_times + 1] = {chunk_name, time_taken}
+-  end
+-  table.sort(sorted_times, function(a, b) return a[2] > b[2] end)
+-  local results = {}
+-  for i, elem in ipairs(sorted_times) do
+-    if not threshold or threshold and elem[2] > threshold then
+-      results[i] = elem[1] .. ' took ' .. elem[2] .. 'ms'
+-    end
+-  end
+-  if threshold then
+-    table.insert(results, '(Only showing plugins that took longer than ' .. threshold .. ' ms ' .. 'to load)')
+-  end
+-
+-  _G._packer.profile_output = results
+-end
+-
+-time([[Luarocks path setup]], true)
+-local package_path_str = "/root/.cache/nvim/packer_hererocks/2.1.0-beta3/share/lua/5.1/?.lua;/root/.cache/nvim/packer_hererocks/2.1.0-beta3/share/lua/5.1/?/init.lua;/root/.cache/nvim/packer_hererocks/2.1.0-beta3/lib/luarocks/rocks-5.1/?.lua;/root/.cache/nvim/packer_hererocks/2.1.0-beta3/lib/luarocks/rocks-5.1/?/init.lua"
+-local install_cpath_pattern = "/root/.cache/nvim/packer_hererocks/2.1.0-beta3/lib/lua/5.1/?.so"
+-if not string.find(package.path, package_path_str, 1, true) then
+-  package.path = package.path .. ';' .. package_path_str
+-end
+-
+-if not string.find(package.cpath, install_cpath_pattern, 1, true) then
+-  package.cpath = package.cpath .. ';' .. install_cpath_pattern
+-end
+-
+-time([[Luarocks path setup]], false)
+-time([[try_loadstring definition]], true)
+-local function try_loadstring(s, component, name)
+-  local success, result = pcall(loadstring(s), name, _G.packer_plugins[name])
+-  if not success then
+-    vim.schedule(function()
+-      vim.api.nvim_notify('packer.nvim: Error running ' .. component .. ' for ' .. name .. ': ' .. result, vim.log.levels.ERROR, {})
+-    end)
+-  end
+-  return result
+-end
+-
+-time([[try_loadstring definition]], false)
+-time([[Defining packer_plugins]], true)
+-_G.packer_plugins = {
+-  nerdtree = {
+-    loaded = true,
+-    path = "/root/.local/share/nvim/site/pack/packer/start/nerdtree",
+-    url = "https://github.com/preservim/nerdtree"
+-  },
+-  ["packer.nvim"] = {
+-    loaded = true,
+-    path = "/root/.local/share/nvim/site/pack/packer/start/packer.nvim",
+-    url = "https://github.com/wbthomason/packer.nvim"
+-  },
+-  undotree = {
+-    loaded = true,
+-    path = "/root/.local/share/nvim/site/pack/packer/start/undotree",
+-    url = "https://github.com/mbbill/undotree"
+-  }
+-}
+-
+-time([[Defining packer_plugins]], false)
+-
+-_G._packer.inside_compile = false
+-if _G._packer.needs_bufread == true then
+-  vim.cmd("doautocmd BufRead")
+-end
+-_G._packer.needs_bufread = false
+-
+-if should_profile then save_profiles() end
+-
+-end)
+-
+-if not no_errors then
+-  error_msg = error_msg:gsub('"', '\\"')
+-  vim.api.nvim_command('echohl ErrorMsg | echom "Error in packer_compiled: '..error_msg..'" | echom "Please check your config for correctness" | echohl None')
+-end
+diff --git a/home/.config/zsh/.zshrc b/home/.config/zsh/.zshrc
+index db147f0..a1b288e 100644
+--- a/home/.config/zsh/.zshrc
++++ b/home/.config/zsh/.zshrc
+@@ -32,6 +32,7 @@ zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
+ zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
+ 
+ alias ll='ls -alFh --color=auto'
++alias tmux="TERM=xterm-256color tmux"
+ 
+ # nvm
+ [ -f $NVM_DIR/nvm.sh ] && source $NVM_DIR/nvm.sh
+@@ -57,25 +58,15 @@ fpath=($ZDOTDIR/prompt $fpath)
+ autoload -Uz purity.zsh; purity.zsh
+ 
+ # tmux
+-alias tn='function name_tmux() {
+-  read "session_name?Enter session name: "
+-  tmux new -s "$session_name"
++alias tn='function tmux_session_with_name() {
++  tmux list-sessions
++  read "SESSION_NAME?Attach: "
++  tmux new-session -A -s "$SESSION_NAME"
+ }
+-name_tmux'
++tmux_session_with_name'
+ alias tl='tmux ls'                    # session list
+ alias td='tmux detach'                # detatch session
+ alias tk='tmux kill-session -t '      # kill session
+-alias t4='function my_t4() {
+-  read "session_name?Enter session name: "
+-  tmux -u new-session -d -s "$session_name"
+-  tmux split-window -v
+-  tmux split-window -h
+-  tmux select-pane -U
+-  tmux split-window -h
+-  tmux select-pane -L
+-  tmux attach-session -d
+-}
+-my_t4'
+ function tt() {
+         if [ -z “$1” ]; then
+                 tmux
+@@ -86,5 +77,4 @@ function tt() {
+         fi
+ }
+ 
+-
+-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
++[ -f $ZDOTDIR/.fzf.zsh ] && source $ZDOTDIR/.fzf.zsh
+diff --git a/home/.git-credentials b/home/.git-credentials
+index fa2a4e3..e69de29 100644
+--- a/home/.git-credentials
++++ b/home/.git-credentials
+@@ -1 +0,0 @@
+-https://ltyiz07%40gmail.com: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@github.com
+diff --git a/home/.gitconfig b/home/.gitconfig
+index 7e31b0b..e9da230 100644
+--- a/home/.gitconfig
++++ b/home/.gitconfig
+@@ -8,7 +8,7 @@
+ 	co = checkout
+ 	br = branch
+ 	cm = commit
+-    la = log --format='%C(auto) %h %d \"%s\" %C(green) %aN %C(red) %ai' --graph --all
++	la = log --format='%C(auto) %h %d \"%s\" %C(green) %aN %C(red) %ai' --graph --all
+ [core]
+ 	editor = nvim
+ 	# pager = delta
+diff --git a/home/.tmux.conf b/home/.tmux.conf
+old mode 100644
+new mode 100755
+index ed1c76e..2c1b407
+--- a/home/.tmux.conf
++++ b/home/.tmux.conf
+@@ -1,5 +1,9 @@
+-set -g default-terminal "screen-256color"
+-# set-option -g default-shell /bin/zsh
++# set-option -ga terminal-overrides ",xterm-256color:Tc"
++
++set-option -sg escape-time 10
++set-option -g focus-events on
++
++set-option -g default-shell /bin/zsh
+ 
+ # remap prefix from 'C-b' to 'C-a'
+ set-option -g prefix C-e
+@@ -7,15 +11,6 @@ set-option -g prefix2 C-b
+ 
+ set -g mouse on
+ 
+-set -g base-index 1
+-setw -g pane-base-index 1
+-set-option -g renumber-windows on
+-
+-# Set new panes to open in current directory
+-bind c new-window -c "#{pane_current_path}"
+-bind '"' split-window -c "#{pane_current_path}"
+-bind % split-window -h -c "#{pane_current_path}"
+-
+ bind -n M-Left select-pane -L
+ bind -n M-Right select-pane -R
+ bind -n M-Up select-pane -U
+@@ -23,31 +18,15 @@ bind -n M-Down select-pane -D
+ 
+ bind-key s set-window-option synchronize-panes\; display-message "synchronize-panes is now #{?pane_synchronized,on,off}"
+ 
+-# set-option -g repeat-time 0
+-set-option -s escape-time 0
+-
+-bind-key M display-panes
+-bind-key -n M-1 select-window -t 1
+-bind-key -n M-2 select-window -t 2
+-bind-key -n M-3 select-window -t 3
+-bind-key -n M-4 select-window -t 4
+-bind-key -n M-5 select-window -t 5
+-bind-key -n M-6 select-window -t 6
+-bind-key -n M-7 select-window -t 7
+-bind-key -n M-8 select-window -t 8
+-bind-key -n M-9 select-window -t 9
+-bind -n M-1 if 'test `tmux list-panes -F "#W"` != "irssi"' 'select-window -t 1' 'send M-1'
+-bind -n M-2 if 'test `tmux list-panes -F "#W"` != "irssi"' 'select-window -t 2' 'send M-2'
+-bind -n M-3 if 'test `tmux list-panes -F "#W"` != "irssi"' 'select-window -t 3' 'send M-3'
+-bind -n M-4 if 'test `tmux list-panes -F "#W"` != "irssi"' 'select-window -t 4' 'send M-4'
+-bind -n M-5 if 'test `tmux list-panes -F "#W"` != "irssi"' 'select-window -t 5' 'send M-5'
+-bind -n M-6 if 'test `tmux list-panes -F "#W"` != "irssi"' 'select-window -t 6' 'send M-6'
+-bind -n M-7 if 'test `tmux list-panes -F "#W"` != "irssi"' 'select-window -t 7' 'send M-7'
+-bind -n M-8 if 'test `tmux list-panes -F "#W"` != "irssi"' 'select-window -t 8' 'send M-8'
+-bind -n M-9 if 'test `tmux list-panes -F "#W"` != "irssi"' 'select-window -t 9' 'send M-9'
+-bind -n M-0 if 'test `tmux list-panes -F "#W"` != "irssi"' 'select-window -t 0' 'send M-0'
+-
+-bind-key k select-pane -U
+-bind-key j select-pane -D
+-bind-key h select-pane -L
+-bind-key l select-pane -R
++bind-key -r k select-pane -U
++bind-key -r j select-pane -D
++bind-key -r h select-pane -L
++bind-key -r l select-pane -R
++
++set-option -g set-clipboard external
++set-option -g mode-keys vi
++bind P paste-buffer
++
++bind-key -T copy-mode-vi v send-keys -X begin-selection
++bind-key -T copy-mode-vi V send-keys -X rectangle-toggle
++bind-key -T copy-mode-vi y send -X copy-selection-and-cancel
+diff --git a/home/.zshenv b/home/.zshenv
+index 8d1e587..1cd503d 100644
+--- a/home/.zshenv
++++ b/home/.zshenv
+@@ -1,8 +1,16 @@
+ export ZDOTDIR="$HOME/.config/zsh"
+ export HISTFILE="$ZDOTDIR/.zsh_history" 
++export ZSH_COMPDUMP="$ZDOTDIR/.zcompdump"
+ 
+ export EDITOR="nvim"
+ export VISUAL="nvim"
+ 
+ export HISTSIZE=10000                   # Maximum events for internal history
+ export SAVEHIST=10000                   # Maximum events in history fil
++
++export ANDROID_HOME=$HOME/Android/Sdk
++export PATH=$PATH:$ANDROID_HOME/emulator
++export PATH=$PATH:$ANDROID_HOME/platform-tools
++
++export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
++[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+diff --git a/neovim b/neovim
+new file mode 160000
+index 0000000..7138412
+--- /dev/null
++++ b/neovim
+@@ -0,0 +1 @@
++Subproject commit 71384129f75462f14344df236cf0a22b83da4f4c
+diff --git a/scripts/activate.sh b/scripts/activate.sh
+index befec99..9b97d20 100755
+--- a/scripts/activate.sh
++++ b/scripts/activate.sh
+@@ -1,7 +1,4 @@
+ #!/bin/bash
+ 
+-# docker start --user $(id -u):$(id -g) works_env
+-# docker exec -it --user $(id -u):$(id -g) works_env zsh
+-
+ docker start works_env
+ docker exec -it works_env zsh
+diff --git a/scripts/linking.sh b/scripts/linking.sh
+new file mode 100755
+index 0000000..e2987f0
+--- /dev/null
++++ b/scripts/linking.sh
+@@ -0,0 +1,23 @@
++#!/bin/bash
++
++SCRIPT_PATH=$(readlink -f "$0")
++SCRIPT_DIR=$(dirname "$SCRIPT_PATH")
++
++#git config file
++GIT_CONFIG_FILE=$(readlink -f "$SCRIPT_DIR/../home/.gitconfig")
++ln -s $GIT_CONFIG_FILE ~/.gitconfig
++
++#tmux config file
++TMUX_CONFIG_FILE=$(readlink -f "$SCRIPT_DIR/../home/.tmux.conf")
++ln -s $TMUX_CONFIG_FILE ~/.tmux.conf
++
++#zsh configs
++ZSH_ENV_FILE=$(readlink -f "$SCRIPT_DIR/../home/.zshenv")
++ZSH_CONFIG_DIR=$(readlink -f "$SCRIPT_DIR/../home/.config/zsh")
++ln -s $ZSH_ENV_FILE ~/.zshenv
++ln -s $ZSH_CONFIG_DIR ~/.config/zsh
++
++#nvim config
++NVIM_CONFIG_DIR=$(readlink -f "$SCRIPT_DIR/../home/.config/nvim")
++ln -s $NVIM_CONFIG_DIR ~/.config/nvim
++
+diff --git a/scripts/rebuild.sh b/scripts/rebuild.sh
+index 84aac21..027c96a 100755
+--- a/scripts/rebuild.sh
++++ b/scripts/rebuild.sh
+@@ -1,3 +1,9 @@
+ #!/bin/bash
+ 
+-docker compose down && docker compose up -d --build
++export GROUP_ID=$(id -g ${USER})
++export USER_ID=$(id -u ${USER})
++export USER_NAME="dever"
++
++docker compose down
++docker compose up -d --build 
++
