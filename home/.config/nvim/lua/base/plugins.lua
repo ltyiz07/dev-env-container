@@ -50,9 +50,13 @@ require("lazy").setup({
 		"williamboman/mason.nvim",
 		dependencies = { "WhoIsSethDaniel/mason-tool-installer.nvim" },
 	},
+
 	"neovim/nvim-lspconfig", -- Collection of configurations for built-in LSP client
-	"hrsh7th/nvim-cmp", -- Autocompletion plugin
 	"hrsh7th/cmp-nvim-lsp", -- LSP source for nvim-cmp
+	"hrsh7th/cmp-buffer",
+	"hrsh7th/cmp-path",
+	"hrsh7th/cmp-cmdline",
+	"hrsh7th/nvim-cmp", -- Autocompletion plugin
 	"saadparwaiz1/cmp_luasnip", -- Snippets source for nvim-cmp
 	"L3MON4D3/LuaSnip", -- Snippets plugin
 	{ "stevearc/conform.nvim", event = { "BufReadPre", "BufNewFile" } },
