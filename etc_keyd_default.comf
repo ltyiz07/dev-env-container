@@ -1,0 +1,25 @@
+[ids]
+*
+
+[main]
+
+# Maps capslock to escape when pressed and control when held.
+capslock = overload(control, esc)
+control = capslock
+
+shift = oneshot(shift)
+
+[control]
+
+[alt]
+
+[control+alt]
+h = macro(C-A-left)
+l = macro(C-A-right)
+
+j = macro(C-A-left C-A-left)
+k = macro(C-A-right C-A-right)
+
+1 = macro(C-A-left C-A-left)
+2 = macro(C-A-left C-A-left C-A-right)
+3 = macro(C-A-left C-A-left C-A-right C-A-right)
