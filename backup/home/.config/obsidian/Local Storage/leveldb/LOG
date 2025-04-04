@@ -1,0 +1,63 @@
+2024/04/09-00:34:00.978 3900 Reusing MANIFEST /home/tailor/.config/obsidian/Local Storage/leveldb/MANIFEST-000001
+2024/04/09-00:34:01.016 3900 Recovering log #12
+2024/04/09-00:34:01.016 3900 Reusing old log /home/tailor/.config/obsidian/Local Storage/leveldb/000012.log 
+2024/04/09-05:02:08.232 38ff Level-0 table #16: started
+2024/04/09-05:02:08.236 38ff Level-0 table #16: 6961 bytes OK
+2024/04/09-05:02:08.239 38ff Delete type=0 #12
+2024/04/09-09:37:08.406 38ff Level-0 table #18: started
+2024/04/09-09:37:08.409 38ff Level-0 table #18: 6943 bytes OK
+2024/04/09-09:37:08.413 38ff Delete type=0 #15
+2024/04/09-09:37:08.413 38ff Compacting 4@0 + 1@1 files
+2024/04/09-09:37:08.417 38ff Generated table #19@0: 10 keys, 595 bytes
+2024/04/09-09:37:08.417 38ff Compacted 4@0 + 1@1 files => 595 bytes
+2024/04/09-09:37:08.420 38ff compacted to: files[ 0 1 1 0 0 0 0 ]
+2024/04/09-09:37:08.421 38ff Delete type=2 #18
+2024/04/09-09:37:08.421 38ff Delete type=2 #10
+2024/04/09-09:37:08.421 38ff Delete type=2 #13
+2024/04/09-09:37:08.421 38ff Delete type=2 #8
+2024/04/09-09:37:08.421 38ff Delete type=2 #16
+2024/04/09-14:12:01.790 38ff Level-0 table #21: started
+2024/04/09-14:12:01.794 38ff Level-0 table #21: 6990 bytes OK
+2024/04/09-14:12:01.797 38ff Delete type=0 #17
+2024/04/09-18:47:26.681 38ff Level-0 table #23: started
+2024/04/09-18:47:26.685 38ff Level-0 table #23: 7025 bytes OK
+2024/04/09-18:47:26.688 38ff Delete type=0 #20
+2024/04/09-23:22:26.680 3900 Level-0 table #25: started
+2024/04/09-23:22:26.702 3900 Level-0 table #25: 6954 bytes OK
+2024/04/09-23:22:26.705 3900 Delete type=0 #22
+2024/04/10-03:57:26.686 38ff Level-0 table #27: started
+2024/04/10-03:57:26.691 38ff Level-0 table #27: 6963 bytes OK
+2024/04/10-03:57:26.694 38ff Delete type=0 #24
+2024/04/10-03:57:26.695 38ff Compacting 4@0 + 1@1 files
+2024/04/10-03:57:26.698 38ff Generated table #28@0: 10 keys, 632 bytes
+2024/04/10-03:57:26.698 38ff Compacted 4@0 + 1@1 files => 632 bytes
+2024/04/10-03:57:26.701 38ff compacted to: files[ 0 1 1 0 0 0 0 ]
+2024/04/10-03:57:26.701 38ff Delete type=2 #23
+2024/04/10-03:57:26.701 38ff Delete type=2 #19
+2024/04/10-03:57:26.701 38ff Delete type=2 #21
+2024/04/10-03:57:26.701 38ff Delete type=2 #25
+2024/04/10-03:57:26.701 38ff Delete type=2 #27
+2024/04/10-08:32:26.685 38ff Level-0 table #30: started
+2024/04/10-08:32:26.706 38ff Level-0 table #30: 6957 bytes OK
+2024/04/10-08:32:26.709 38ff Delete type=0 #26
+2024/04/10-12:37:26.696 38ff Level-0 table #32: started
+2024/04/10-12:37:26.717 38ff Level-0 table #32: 6947 bytes OK
+2024/04/10-12:37:26.721 38ff Delete type=0 #29
+2024/04/10-15:17:26.699 3900 Level-0 table #34: started
+2024/04/10-15:17:26.720 3900 Level-0 table #34: 6347 bytes OK
+2024/04/10-15:17:26.723 3900 Delete type=0 #31
+2024/04/13-00:26:58.976 38ff Level-0 table #36: started
+2024/04/13-00:26:58.979 38ff Level-0 table #36: 6568 bytes OK
+2024/04/13-00:26:58.982 38ff Delete type=0 #33
+2024/04/13-00:26:58.982 38ff Compacting 4@0 + 1@1 files
+2024/04/13-00:26:58.986 38ff Generated table #37@0: 10 keys, 634 bytes
+2024/04/13-00:26:58.987 38ff Compacted 4@0 + 1@1 files => 634 bytes
+2024/04/13-00:26:58.989 38ff compacted to: files[ 0 1 1 0 0 0 0 ]
+2024/04/13-00:26:58.990 38ff Delete type=2 #36
+2024/04/13-00:26:58.990 38ff Delete type=2 #32
+2024/04/13-00:26:58.990 38ff Delete type=2 #30
+2024/04/13-00:26:58.990 38ff Delete type=2 #34
+2024/04/13-00:26:58.990 38ff Delete type=2 #28
+2024/04/13-14:11:56.930 38ff Level-0 table #39: started
+2024/04/13-14:11:56.933 38ff Level-0 table #39: 7084 bytes OK
+2024/04/13-14:11:56.936 38ff Delete type=0 #35

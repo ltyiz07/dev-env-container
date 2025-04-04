@@ -1,0 +1,12 @@
+2024/04/08-15:02:18.272 3df0d Reusing MANIFEST /home/tailor/.config/obsidian/IndexedDB/app_obsidian.md_0.indexeddb.leveldb/MANIFEST-000001
+2024/04/08-15:02:18.272 3df0d Recovering log #4
+2024/04/08-15:02:18.300 3df0d Reusing old log /home/tailor/.config/obsidian/IndexedDB/app_obsidian.md_0.indexeddb.leveldb/000004.log 
+2024/04/08-17:38:08.949 3df2d Level-0 table #8: started
+2024/04/08-17:38:08.969 3df2d Level-0 table #8: 1313129 bytes OK
+2024/04/08-17:38:08.973 3df2d Delete type=0 #4
+2024/04/08-17:40:03.166 3df0d Compacting 1@1 + 1@2 files
+2024/04/08-17:40:03.179 3df0d Generated table #9@1: 1210 keys, 205701 bytes
+2024/04/08-17:40:03.179 3df0d Compacted 1@1 + 1@2 files => 205701 bytes
+2024/04/08-17:40:03.181 3df0d compacted to: files[ 0 0 1 0 0 0 0 ]
+2024/04/08-17:40:03.181 3df0d Delete type=2 #5
+2024/04/08-17:40:03.181 3df0d Delete type=2 #8

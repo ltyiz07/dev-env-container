@@ -1,0 +1,6 @@
+2024/04/08-15:02:16.622 3df0d Reusing MANIFEST /home/tailor/.config/obsidian/Local Storage/leveldb/MANIFEST-000001
+2024/04/08-15:02:16.660 3df0d Recovering log #9
+2024/04/08-15:02:16.660 3df0d Reusing old log /home/tailor/.config/obsidian/Local Storage/leveldb/000009.log 
+2024/04/08-18:46:17.447 3df0d Level-0 table #13: started
+2024/04/08-18:46:17.450 3df0d Level-0 table #13: 7052 bytes OK
+2024/04/08-18:46:17.453 3df0d Delete type=0 #9

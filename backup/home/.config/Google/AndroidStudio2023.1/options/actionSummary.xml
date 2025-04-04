@@ -1,0 +1,94 @@
+<application>
+  <component name="ActionsLocalSummary">
+    <e n="$SelectAll">
+      <i c="1" l="1708797876149" />
+    </e>
+    <e n="Android.AdbDevicePairing">
+      <i c="1" l="1708792180812" />
+    </e>
+    <e n="Android.DeviceManager2">
+      <i c="1" l="1708791457594" />
+    </e>
+    <e n="Android.SyncProject">
+      <i c="1" l="1708792264765" />
+    </e>
+    <e n="EditorCopy">
+      <i c="1" l="1708797876399" />
+    </e>
+    <e n="GoogleLogin.LoginService">
+      <i c="4" l="1708792279207" />
+    </e>
+    <e n="HideActiveWindow">
+      <i c="1" l="1708799932396" />
+    </e>
+    <e n="MoreRunToolbarActions">
+      <i c="1" l="1708794781635" />
+    </e>
+    <e n="RedesignedRunConfigurationSelector">
+      <i c="2" l="1708792274278" />
+    </e>
+    <e n="Run">
+      <i c="4" l="1726655678110" />
+    </e>
+    <e n="SettingsEntryPoint">
+      <i c="4" l="1726656459754" />
+    </e>
+    <e n="WelcomeScreen.CreateNewProject">
+      <i c="2" l="1708791303838" />
+    </e>
+    <e n="android.device.power.button">
+      <i c="5" l="1726656318803" />
+    </e>
+    <e n="android.device.screen.record">
+      <i c="2" l="1708791782336" />
+    </e>
+    <e n="android.emulator.extended.controls">
+      <i c="8" l="1726656312608" />
+    </e>
+    <e n="com.android.tools.idea.device.explorer.files.ui.menu.item.TreeMenuItem$action$1">
+      <i c="1" l="1708792188028" />
+    </e>
+    <e n="com.android.tools.idea.devicemanagerv2.DeleteAction">
+      <i c="2" l="1726655382855" />
+    </e>
+    <e n="com.android.tools.idea.devicemanagerv2.DeviceManagerPanel$toAnAction$2">
+      <i c="4" l="1726654918828" />
+    </e>
+    <e n="com.android.tools.idea.devicemanagerv2.EditDeviceAction">
+      <i c="4" l="1726653288971" />
+    </e>
+    <e n="com.android.tools.idea.devicemanagerv2.OpenDeviceExplorerAction">
+      <i c="2" l="1708792185109" />
+    </e>
+    <e n="com.android.tools.idea.devicemanagerv2.WipeDataAction">
+      <i c="2" l="1726655379303" />
+    </e>
+    <e n="com.android.tools.idea.run.deployment.SelectDeviceAction">
+      <i c="9" l="1726655676998" />
+    </e>
+    <e n="com.intellij.execution.ui.AllRunConfigurationsToggle">
+      <i c="2" l="1708792276500" />
+    </e>
+    <e n="com.intellij.ide.ReopenProjectAction">
+      <i c="1" l="1708791416950" />
+    </e>
+    <e n="com.intellij.ide.actions.SettingsEntryPointAction$1">
+      <i c="1" l="1708791445947" />
+    </e>
+    <e n="com.intellij.openapi.actionSystem.DefaultActionGroup">
+      <i c="2" l="1708792289500" />
+    </e>
+    <e n="com.intellij.openapi.wm.impl.SquareAnActionButton">
+      <i c="34" l="1709984332730" />
+    </e>
+    <e n="com.intellij.toolWindow.MoreSquareStripeButton$Companion$createAction$1">
+      <i c="1" l="1708792270464" />
+    </e>
+    <e n="com.intellij.toolWindow.ToolWindowHeader$HideAction">
+      <i c="4" l="1709983792917" />
+    </e>
+    <e n="com.intellij.toolWindow.ToolWindowHeader$ShowOptionsAction">
+      <i c="3" l="1708791809072" />
+    </e>
+  </component>
+</application>

@@ -1,0 +1,17 @@
+# This is Git's per-user configuration file.
+[user]
+	name = Tailor
+	email = ltyiz07@gmail.com
+[alias]
+	lo = log --oneline --graph --all
+	ss = status
+	co = checkout
+	br = branch
+	cm = commit
+	la = log --format='%C(auto) %h %d \"%s\" %C(green) %aN %C(red) %ai' --graph --all
+[core]
+	editor = nvim
+	# pager = delta
+[credential]
+	helper = store
+

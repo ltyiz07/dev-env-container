@@ -1,0 +1,12 @@
+[Added Associations]
+application/vnd.debian.binary-package=org.gnome.FileRoller.desktop;snap-store_ubuntu-software-local-file.desktop;
+font/ttf=org.gnome.font-viewer.desktop;
+application/x-mimearchive=google-chrome.desktop;
+
+[Default Applications]
+text/html=google-chrome.desktop
+x-scheme-handler/http=google-chrome.desktop
+x-scheme-handler/https=google-chrome.desktop
+x-scheme-handler/about=google-chrome.desktop
+x-scheme-handler/unknown=google-chrome.desktop
+x-scheme-handler/eclipse+command=_usr_share_dbeaver-ce_.desktop
