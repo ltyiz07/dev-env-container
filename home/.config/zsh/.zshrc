@@ -33,6 +33,7 @@ zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
 
 alias ll='ls -alFh --color=auto'
 alias tmux="TERM=xterm-256color tmux"
+alias g="git"
 
 # nvm
 [ -f $NVM_DIR/nvm.sh ] && source $NVM_DIR/nvm.sh

@@ -21,7 +21,8 @@ map("n", "<C-Up>", "<C-w>+")
 map("n", "<C-Down>", "<C-w>-")
 
 -- close buffer with: ctrl + w
-map("n", "<C-q>", "<Cmd>q<CR>")
+-- instead using C-q for visual-block mode
+-- map("n", "<C-q>", "<Cmd>q<CR>")
 -- create new tab with: ctrl + n
 map("n", "<C-t>", "<Cmd>tabnew<CR>")
 -- chnage between tabs with: alt + {h, l}
